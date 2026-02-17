@@ -3,63 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026年2月 住宅ローン金利比較表</title>
+    <title>2026年2月 住宅ローン金利比較表 - アズールモーゲージ</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
-        body { 
-            font-family: 'Noto Sans JP', sans-serif; 
-            background-color: #f8fafc; 
-            color: #1e293b;
-            line-height: 1.6;
+        :root {
+            --navy-deep: #0f172a;
+            --navy-bright: #1e293b;
+            --gold-muted: #c5a059;
+            --gold-light: #e2c28d;
         }
-        .header-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-        .section-title { border-left: 5px solid #3b82f6; padding-left: 1rem; margin-bottom: 1.5rem; font-weight: 900; }
-        .data-card { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; transition: all 0.2s; }
-        .data-card:hover { border-color: #3b82f6; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .highlight-number { font-feature-settings: "palt"; letter-spacing: -0.05em; }
-        .flat-badge { background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 900; vertical-align: middle; margin-right: 4px; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--navy-deep);
+            color: #f8fafc;
+            background-image: radial-gradient(circle at top right, rgba(197, 160, 89, 0.08), transparent);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .serif { font-family: 'Noto Serif JP', serif; }
+        
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #c5a059 0%, #e2c28d 50%, #c5a059 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .premium-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(197, 160, 89, 0.25);
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .premium-card:hover {
+            border-color: rgba(197, 160, 89, 0.6);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .section-title-azure {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+        .section-title-azure::before {
+            content: "";
+            width: 4px;
+            height: 24px;
+            background: var(--gold-muted);
+        }
+
+        .highlight-number {
+            font-family: 'Noto Serif JP', serif;
+            font-feature-settings: "palt";
+            letter-spacing: -0.02em;
+        }
+
+        .flat-badge {
+            background: var(--gold-muted);
+            color: var(--navy-deep);
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+        }
+
+        table { border-collapse: separate; border-spacing: 0; width: 100%; }
+        th, td { border: 1px solid rgba(197, 160, 89, 0.15); }
+        th { background: rgba(255, 255, 255, 0.05); }
+
+        .overflow-x-auto::-webkit-scrollbar {
+            height: 4px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: var(--gold-muted);
+            border-radius: 10px;
+        }
+        
+        @media print {
+            .no-print { display: none; }
+            body { background: white; color: black; }
+            .premium-card { border: 1px solid #ccc; backdrop-filter: none; background: white; }
+        }
     </style>
 </head>
-<body class="p-4 md:p-12">
+<body class="py-8 md:py-16 px-4">
 
-    <!-- 
-      ================================================================
-      【★ 管理・編集エリア ★】
-      毎月の更新時は、以下の DATA オブジェクトの数値を変更してください。
-      保存（コミット）すると、公開URL側の表示が自動的に反映されます。
-      ================================================================
-    -->
     <script>
+        // ============================================================
+        // 【編集エリア】毎月の金利更新はこちらの数値を書き換えてください
+        // ============================================================
         const DATA = {
-            updateMonth: "2026年2月",
+            // 1. カレンダー情報
+            updateMonth: "2026年2月",      // 表のメインタイトルに反映されます
+            prevMonth: "2026年1月",        // シミュレーションの比較元として表示されます
+
+            // 2. メイン金利表 (%)
+            flat90Below: "2.260",         // フラット35 (融資率9割以下)
+            flat90Over: "2.370",          // フラット35 (融資率9割超)
             
-            // --- フラット35本体（固定金利） ---
-            flat90Below: "2.260",      
-            flat90Over: "2.370",       
+            // 3. 比較シミュレーション用数値
+            currRate: "2.26",             // 今月の実行金利（シミュレーション計算用）
+            prevRate: "2.08",             // 前月の実行金利（比較計算用）
+
+            // 4. 付帯ローン各社金利 (%)
+            docomoRate: "4.05",           // ドコモ・ファイナンス
+            saisonRate: "3.95",           // クレディセゾン
+            kashiwabaraRate: "3.300",     // カシワバラ・アシスト
+
+            // 5. 手数料・その他諸条件
+            docomoFee: "2.20",            // ドコモ手数料 (%)
+            saisonFee: "2.20",            // セゾン手数料 (%)
+            kashiwabaraFee: "1.10",       // カシワバラ手数料 (%)
+            kashiwabaraMinFee: "55,000",   // カシワバラ最低手数料 (円)
             
-            // --- 付帯ローン（変動金利） ---
-            docomoRate: "4.05",        
-            saisonRate: "3.95",        
-            kashiwabaraRate: "3.300",  
+            // 6. シミュレーション固定条件
+            loanAmount: 40000000,         // 借入額 4,000万円
+            loanTermYears: 35,            // 期間 35年
 
-            // --- 諸費用関連 ---
-            docomoFee: "2.20",
-            saisonFee: "2.20",
-            kashiwabaraFee: "1.10",
-            kashiwabaraMinFee: "55,000",
-
-            // --- シミュレーション設定 ---
-            loanAmount: 40000000, 
-            loanTermYears: 35,
-            prevMonth: "2026年1月",
-            prevRate: "2.08",      
-            currRate: "2.26",      
-
+            // 7. 会社情報
             companyName: "株式会社アズールモーゲージ",
             phoneNumber: "03-5790-2030"
         };
+        // ============================================================
 
+
+        // 計算ロジック
         const calculateMonthly = (principal, annualRate, years) => {
             const monthlyRate = (annualRate / 100) / 12;
             const payments = years * 12;
@@ -71,15 +147,18 @@
         window.onload = () => {
             const prevMonthlyValue = calculateMonthly(DATA.loanAmount, parseFloat(DATA.prevRate), DATA.loanTermYears);
             const currMonthlyValue = calculateMonthly(DATA.loanAmount, parseFloat(DATA.currRate), DATA.loanTermYears);
+            
             const monthlyDiffValue = currMonthlyValue - prevMonthlyValue;
-            const totalDiffValue = Math.floor((monthlyDiffValue * DATA.loanTermYears * 12) / 10000);
+            const totalDiffValue = Math.floor((monthlyDiffValue * DATA.loanTermYears * 12));
 
             const displayData = {
                 ...DATA,
                 prevMonthly: (prevMonthlyValue / 10000).toFixed(1),
                 currMonthly: (currMonthlyValue / 10000).toFixed(1),
                 monthlyDiff: (monthlyDiffValue).toLocaleString(),
-                totalDiff: totalDiffValue.toLocaleString()
+                totalDiff: Math.floor(totalDiffValue / 10000).toLocaleString(),
+                prevTotal: Math.floor((prevMonthlyValue * DATA.loanTermYears * 12) / 10000).toLocaleString(),
+                currTotal: Math.floor((currMonthlyValue * DATA.loanTermYears * 12) / 10000).toLocaleString()
             };
 
             document.querySelectorAll('[data-key]').forEach(el => {
@@ -89,188 +168,224 @@
         };
     </script>
 
-    <div class="max-w-5xl mx-auto shadow-2xl rounded-2xl overflow-hidden bg-white">
+    <div class="w-full max-w-6xl mx-auto flex flex-col items-center">
         
-        <header class="header-gradient text-white p-10 md:p-16 text-center">
+        <header class="text-center mb-12 md:mb-16 w-full px-2">
             <div class="flex items-center justify-center gap-4 mb-6">
-                <div class="h-px w-8 bg-blue-500"></div>
-                <span class="text-xs md:text-sm font-black tracking-[0.2em] text-blue-400" data-key="companyName"></span>
-                <div class="h-px w-8 bg-blue-500"></div>
+                <div class="h-px w-8 md:w-12 bg-gold-muted opacity-50"></div>
+                <span class="text-[10px] md:text-sm font-black tracking-[0.3em] text-gold-muted whitespace-nowrap" data-key="companyName"></span>
+                <div class="h-px w-8 md:w-12 bg-gold-muted opacity-50"></div>
             </div>
-            <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tighter">
-                <span data-key="updateMonth"></span> <span class="text-blue-400">住宅ローン</span>金利比較
+            <h1 class="text-3xl md:text-6xl font-black serif gold-gradient-text mb-6 tracking-tight leading-tight">
+                <span data-key="updateMonth"></span> <br class="md:hidden">住宅ローン金利比較表
             </h1>
-            <p class="text-base md:text-lg text-slate-400 font-medium">
-                融資率10割（フルローン）をご検討中の方への最新データ
+            <p class="text-slate-400 text-xs md:text-base max-w-2xl mx-auto px-4 font-light tracking-widest leading-relaxed">
+                融資率に応じた2つの選択肢。最適な返済プランの構築をサポートします。
             </p>
         </header>
 
-        <!-- フラット35金利表示エリア -->
-        <div class="bg-slate-100 border-y border-slate-200">
-            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2">
-                <div class="p-8 text-center border-b md:border-b-0 md:border-r border-slate-200 bg-white">
-                    <div class="flex justify-center items-center mb-2">
-                        <span class="flat-badge">フラット35</span>
-                        <p class="text-[11px] font-black text-slate-500 tracking-widest uppercase">融資率9割以下</p>
-                    </div>
-                    <p class="text-4xl md:text-5xl font-black text-slate-800 highlight-number">
-                        <span data-key="flat90Below"></span><span class="text-xl ml-1">%</span>
-                    </p>
-                    <p class="text-[11px] text-blue-500 mt-2 font-bold">併用プラン(9割分)の適用金利</p>
+        <!-- メイン金利比較 -->
+        <div class="grid md:grid-cols-2 gap-6 md:gap-8 w-full mb-12 md:mb-16 px-2">
+            <!-- 9割以下 -->
+            <div class="premium-card p-8 md:p-12 relative overflow-hidden flex flex-col items-center">
+                <div class="absolute top-0 left-0 w-full h-1 bg-white/10"></div>
+                <span class="flat-badge mb-4">フラット35</span>
+                <h3 class="text-sm md:text-base font-bold text-white mb-2 tracking-widest">融資率 9割以下</h3>
+                <p class="text-[10px] text-slate-500 font-bold tracking-[0.2em] mb-6">自己資金1割、または付帯ローン併用時</p>
+                <div class="flex items-baseline gap-2 mb-4">
+                    <span class="text-5xl md:text-7xl font-black serif text-white highlight-number" data-key="flat90Below"></span>
+                    <span class="text-xl md:text-2xl font-bold text-gold-muted">%</span>
                 </div>
-                <div class="p-8 text-center bg-red-50/30">
-                    <div class="flex justify-center items-center mb-2">
-                        <span class="flat-badge bg-red-600">フラット35</span>
-                        <p class="text-[11px] font-black text-red-500 tracking-widest uppercase">融資率9割超（10割）</p>
-                    </div>
-                    <p class="text-4xl md:text-5xl font-black text-red-600 highlight-number">
-                        <span data-key="flat90Over"></span><span class="text-xl ml-1">%</span>
+                <div class="mt-auto pt-6 border-t border-white/5 w-full text-center">
+                    <p class="text-[11px] text-slate-400 font-medium leading-relaxed">
+                        低いベース金利を活かし、付帯ローンの<br>早期返済で総利息を抑えたい方向け
                     </p>
-                    <p class="text-[11px] text-red-400 mt-2 font-bold">全額固定プランの適用金利</p>
+                </div>
+            </div>
+
+            <!-- 9割超 -->
+            <div class="premium-card p-8 md:p-12 relative overflow-hidden flex flex-col items-center">
+                <div class="absolute top-0 left-0 w-full h-1 bg-white/10"></div>
+                <span class="flat-badge mb-4">フラット35</span>
+                <h3 class="text-sm md:text-base font-bold text-white mb-2 tracking-widest">融資率 9割超</h3>
+                <p class="text-[10px] text-slate-500 font-bold tracking-[0.2em] mb-6">フルローン（自己資金0円）時</p>
+                <div class="flex items-baseline gap-2 mb-4">
+                    <span class="text-5xl md:text-7xl font-black serif text-white highlight-number" data-key="flat90Over"></span>
+                    <span class="text-xl md:text-2xl font-bold text-gold-muted">%</span>
+                </div>
+                <div class="mt-auto pt-6 border-t border-white/5 w-full text-center">
+                    <p class="text-[11px] text-slate-400 font-medium leading-relaxed">
+                        全額をフラット35でまとめ、35年間<br>返済額を完全に固定したい方向け
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="p-6 md:p-12 space-y-16">
+        <!-- プラン選択の指針 -->
+        <section class="w-full mb-16 md:mb-24">
+            <div class="section-title-azure px-2">
+                <h2 class="text-lg md:text-2xl font-bold serif tracking-widest">ご状況に合わせたプランニング</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6 md:gap-8 px-2">
+                <div class="premium-card p-6 md:p-10 border-white/10">
+                    <h3 class="font-bold text-base md:text-xl tracking-wider text-gold-light mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-full bg-gold-muted/20 text-gold-muted flex items-center justify-center text-sm">A</span>
+                        10割単体プラン
+                    </h3>
+                    <ul class="text-xs md:text-sm text-slate-400 space-y-4 font-light">
+                        <li class="flex gap-3">
+                            <span class="text-gold-muted mt-1">●</span>
+                            <span><strong>シンプルさを重視：</strong><br>管理を一本化し、将来の金利変動リスクを0にしたい。</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-gold-muted mt-1">●</span>
+                            <span><strong>長期の安定：</strong><br>付帯ローンの高い変動金利を避け、最後まで一定の支払いを維持。</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="premium-card p-6 md:p-10 border-white/10">
+                    <h3 class="font-bold text-base md:text-xl tracking-wider text-gold-light mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-full bg-gold-muted/20 text-gold-muted flex items-center justify-center text-sm">B</span>
+                        付帯ローン併用プラン
+                    </h3>
+                    <ul class="text-xs md:text-sm text-slate-400 space-y-4 font-light">
+                        <li class="flex gap-3">
+                            <span class="text-gold-muted mt-1">●</span>
+                            <span><strong>総コストの削減：</strong><br>9割分を低い金利で借り、総利息の圧縮を狙いたい。</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-gold-muted mt-1">●</span>
+                            <span><strong>積極的な繰上返済：</strong><br>金利の高い1割部分を数年で完済する計画がある。</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- シミュレーション -->
+        <section class="w-full premium-card p-8 md:p-16 bg-gradient-to-br from-slate-800 to-navy-deep border-white/10 relative overflow-hidden mb-16 md:mb-20">
+            <h2 class="text-gold-muted font-black text-center tracking-[0.4em] text-[9px] md:text-[10px] mb-12 uppercase">前月との市場比較シミュレーション</h2>
             
-            <section>
-                <h2 class="section-title text-xl md:text-2xl text-slate-800 uppercase tracking-wider">返済スタイルに合わせた選び方</h2>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="data-card p-8 border-slate-200">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold">01</span>
-                            <h3 class="font-bold text-slate-800">10割単体プラン（完走型）</h3>
+            <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center justify-center">
+                <!-- 月々の返済額比較 -->
+                <div class="space-y-8">
+                    <p class="text-center text-[10px] text-slate-400 font-black tracking-widest uppercase">月々の支払額（推移）</p>
+                    <div class="flex flex-col gap-6">
+                        <div class="text-center opacity-40">
+                            <p class="text-[8px] text-slate-500 font-black mb-1 tracking-widest"><span data-key="prevMonth"></span>基準</p>
+                            <span class="text-xl font-bold serif text-white">約<span data-key="prevMonthly"></span>万円</span>
                         </div>
-                        <p class="text-sm text-slate-600 mb-6 leading-relaxed">
-                            <strong>「繰り上げ返済の予定がない」方に適しています。</strong>全額を固定金利（9割超金利）でまとめるため、最後まで返済額が変わりません。付帯ローンの高い変動金利を避けることで、35年間の総支払額を抑えやすい選択肢です。
-                        </p>
-                        <div class="bg-slate-50 rounded-lg p-4 flex justify-between items-center border border-slate-100">
-                            <span class="text-xs font-bold text-slate-500">全額に適用される金利</span>
-                            <span class="text-xl font-black text-red-600"><span data-key="flat90Over"></span>%</span>
+                        <div class="flex justify-center text-gold-muted/50">
+                            <svg class="w-5 h-5 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
-                    </div>
-
-                    <div class="data-card p-8 border-blue-200 bg-blue-50/30">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold">02</span>
-                            <h3 class="font-bold text-blue-900">付帯ローン併用（早期返済型）</h3>
-                        </div>
-                        <p class="text-sm text-slate-600 mb-6 leading-relaxed">
-                            <strong>「早期に繰り上げ返済ができる」方に最適です。</strong>9割を低い「9割以下金利」で固定し、残り1割を付帯ローンで借ります。高い金利の1割部分を先に返済することで、総利息を劇的に節約できます。
-                        </p>
-                        <div class="bg-white border border-blue-100 rounded-lg p-4 space-y-2">
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="font-bold text-slate-500">フラット35 (9割分)</span>
-                                <span class="font-black text-blue-600 text-base"><span data-key="flat90Below"></span>%</span>
-                            </div>
-                            <div class="flex justify-between items-center text-xs border-t pt-2">
-                                <span class="font-bold text-slate-500">付帯ローン (1割分)</span>
-                                <span class="font-black text-red-500 text-base">年 3.3%〜4.0%</span>
-                            </div>
+                        <div class="text-center">
+                            <p class="text-[8px] text-gold-light font-black mb-1 tracking-widest"><span data-key="updateMonth"></span>現在</p>
+                            <span class="text-4xl md:text-5xl font-black serif text-white highlight-number">約<span data-key="currMonthly"></span>万円</span>
                         </div>
                     </div>
                 </div>
-            </section>
 
-            <section>
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                    <h2 class="section-title text-xl md:text-2xl text-slate-800 uppercase tracking-wider mb-0">付帯ローン主要3社 比較データ</h2>
-                    <p class="text-[11px] text-slate-400 font-medium">※データは<span data-key="updateMonth"></span>時点の実行金利です</p>
+                <!-- 返済総額の比較 -->
+                <div class="space-y-8 border-t md:border-t-0 md:border-l border-white/10 pt-8 md:pt-0 md:pl-12">
+                    <p class="text-center text-[10px] text-slate-400 font-black tracking-widest uppercase">35年間の総支払額（試算）</p>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-baseline px-4 opacity-60">
+                            <span class="text-[10px] text-slate-500 font-bold"><span data-key="prevMonth"></span>時点</span>
+                            <span class="text-lg font-bold text-slate-400"><span data-key="prevTotal"></span>万円</span>
+                        </div>
+                        <div class="flex justify-between items-baseline px-4 bg-white/5 py-4 rounded-xl border border-white/5">
+                            <span class="text-[10px] text-gold-light font-bold"><span data-key="updateMonth"></span>現在</span>
+                            <span class="text-xl md:text-2xl font-black serif text-white"><span data-key="currTotal"></span>万円</span>
+                        </div>
+                    </div>
+                    <div class="text-center bg-white/5 py-4 rounded-2xl border border-white/10">
+                        <p class="text-[10px] text-slate-500 font-black mb-1 tracking-widest uppercase">前回比の増加額</p>
+                        <span class="text-2xl md:text-3xl font-black serif gold-gradient-text highlight-number">約<span data-key="totalDiff"></span>万円</span>
+                    </div>
                 </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse">
+            </div>
+
+            <div class="mt-12 md:mt-16 pt-8 md:pt-10 border-t border-white/5 text-center">
+                <p class="text-[10px] md:text-sm text-slate-400 font-light leading-relaxed tracking-widest px-2">
+                    借入 4,000万円・35年返済の場合の試算です。
+                </p>
+            </div>
+        </section>
+
+        <!-- 付帯ローン比較 -->
+        <section class="w-full mb-16 md:mb-20 px-2">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 md:mb-10">
+                <div class="section-title-azure mb-0">
+                    <h2 class="text-lg md:text-2xl font-bold serif tracking-widest">付帯ローン主要3社 比較</h2>
+                </div>
+                <p class="text-[9px] md:text-[10px] text-slate-500 font-bold tracking-widest uppercase">2026 February Update</p>
+            </div>
+            
+            <div class="premium-card overflow-hidden">
+                <div class="overflow-x-auto w-full">
+                    <table class="min-w-[600px] md:min-w-full">
                         <thead>
-                            <tr class="bg-slate-800 text-white">
-                                <th class="p-5 text-left text-xs font-black tracking-widest border border-slate-700">COMPARISON</th>
-                                <th class="p-5 text-center text-xs font-black border border-slate-700">ドコモ・ファイナンス</th>
-                                <th class="p-5 text-center text-xs font-black border border-slate-700">クレディセゾン</th>
-                                <th class="p-5 text-center text-xs font-black border border-slate-700">カシワバラ・アシスト</th>
+                            <tr class="text-gold-muted">
+                                <th class="p-4 md:p-6 text-left text-[9px] md:text-[10px] font-black tracking-widest uppercase">サービス比較</th>
+                                <th class="p-4 md:p-6 text-center text-[9px] md:text-[10px] font-black tracking-widest">ドコモ・ファイナンス</th>
+                                <th class="p-4 md:p-6 text-center text-[9px] md:text-[10px] font-black tracking-widest">クレディセゾン</th>
+                                <th class="p-4 md:p-6 text-center text-[9px] md:text-[10px] font-black tracking-widest">カシワバラ・アシスト</th>
                             </tr>
                         </thead>
-                        <tbody class="text-sm">
-                            <tr class="bg-white">
-                                <td class="p-5 border font-bold text-slate-500 bg-slate-50/50">商品名</td>
-                                <td class="p-5 border text-center font-bold text-slate-700">フラット ONE</td>
-                                <td class="p-5 border text-center font-bold text-slate-700">フラット35 PLUS</td>
-                                <td class="p-5 border text-center font-bold text-blue-700">フラットプラス</td>
+                        <tbody class="text-xs md:text-sm">
+                            <tr>
+                                <td class="p-4 md:p-6 font-bold text-slate-500 bg-white/5">商品名</td>
+                                <td class="p-4 md:p-6 text-center text-white font-medium">フラット ONE</td>
+                                <td class="p-4 md:p-6 text-center text-white font-medium">フラット35 PLUS</td>
+                                <td class="p-4 md:p-6 text-center text-white font-medium">フラットプラス</td>
                             </tr>
-                            <tr class="bg-white">
-                                <td class="p-5 border font-bold text-slate-500 bg-slate-50/50">変動金利（1割分）</td>
-                                <td class="p-5 border text-center font-black text-xl text-slate-800"><span data-key="docomoRate"></span>%</td>
-                                <td class="p-5 border text-center font-black text-xl text-slate-800"><span data-key="saisonRate"></span>%〜</td>
-                                <td class="p-5 border text-center font-black text-2xl text-blue-600 bg-blue-50/30 highlight-number"><span data-key="kashiwabaraRate"></span><span class="text-xs ml-0.5">%</span></td>
+                            <tr>
+                                <td class="p-4 md:p-6 font-bold text-slate-500 bg-white/5">変動金利（1割分）</td>
+                                <td class="p-4 md:p-6 text-center font-black serif text-lg"><span data-key="docomoRate"></span>%</td>
+                                <td class="p-4 md:p-6 text-center font-black serif text-lg"><span data-key="saisonRate"></span>%〜</td>
+                                <td class="p-4 md:p-6 text-center font-black serif text-xl gold-gradient-text highlight-number"><span data-key="kashiwabaraRate"></span>%</td>
                             </tr>
-                            <tr class="bg-white">
-                                <td class="p-5 border font-bold text-slate-500 bg-slate-50/50">事務手数料（税込）</td>
-                                <td class="p-5 border text-center text-slate-600 font-medium"><span data-key="docomoFee"></span>%</td>
-                                <td class="p-5 border text-center text-slate-600 font-medium"><span data-key="saisonFee"></span>%</td>
-                                <td class="p-5 border text-center bg-blue-50/30">
-                                    <span class="font-black text-blue-700 text-lg underline underline-offset-4 decoration-2"><span data-key="kashiwabaraFee"></span>%</span><br>
-                                    <span class="text-[9px] text-blue-500 font-black mt-1 inline-block">(最低 <span data-key="kashiwabaraMinFee"></span>円)</span>
+                            <tr>
+                                <td class="p-4 md:p-6 font-bold text-slate-500 bg-white/5">事務手数料（税込）</td>
+                                <td class="p-4 md:p-6 text-center text-slate-400"><span data-key="docomoFee"></span>%</td>
+                                <td class="p-4 md:p-6 text-center text-slate-400"><span data-key="saisonFee"></span>%</td>
+                                <td class="p-4 md:p-6 text-center">
+                                    <span class="font-bold text-white"><span data-key="kashiwabaraFee"></span>%</span><br>
+                                    <span class="text-[8px] text-gold-muted font-bold mt-1 inline-block">最低 <span data-key="kashiwabaraMinFee"></span>円</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <p class="mt-4 text-[10px] text-slate-400 text-right font-medium italic">※フラット35本体の金利とは別に、1割相当額に適用される金利です。</p>
-            </section>
+            </div>
+            <p class="mt-4 text-[8px] md:text-[9px] text-slate-500 text-right font-medium italic tracking-wider">※付帯ローン部分はフラット35の本体金利とは別に金利が発生します。</p>
+        </section>
 
-            <section class="bg-slate-900 rounded-2xl p-8 md:p-12 text-white relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-                    <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-4h-2v4H8V9h2v2h2V9h2v8zm4 0h-2V7h2v10z"/></svg>
+        <!-- フッター -->
+        <footer class="w-full text-center space-y-10 pb-12">
+            <div>
+                <p class="text-[9px] md:text-[10px] text-gold-muted font-black tracking-[0.3em] mb-4" data-key="companyName"></p>
+                <div class="inline-flex items-center justify-center bg-white/5 border border-gold-muted/30 rounded-full px-8 md:px-12 py-4 md:py-5 shadow-2xl backdrop-blur-md">
+                    <span class="text-gold-muted mr-3 md:mr-4">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                    </span>
+                    <span class="text-xl md:text-3xl font-black serif text-white tracking-tighter" data-key="phoneNumber"></span>
                 </div>
-                
-                <h2 class="text-blue-400 font-black text-center tracking-[0.2em] text-sm mb-10 uppercase">Simulation Report</h2>
-                
-                <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
-                    <div class="text-center group">
-                        <p class="text-[10px] text-slate-500 font-black mb-2 uppercase tracking-widest"><span data-key="prevMonth"></span>基準 (<span data-key="prevRate"></span>%)</p>
-                        <p class="text-2xl md:text-3xl font-bold opacity-60 group-hover:opacity-100 transition-opacity">月々 約<span data-key="prevMonthly"></span>万円</p>
-                    </div>
-                    
-                    <div class="flex items-center justify-center">
-                        <div class="h-px w-8 bg-slate-700"></div>
-                        <div class="px-4 text-slate-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                        </div>
-                        <div class="h-px w-8 bg-slate-700"></div>
-                    </div>
-
-                    <div class="text-center">
-                        <p class="text-[10px] text-blue-400 font-black mb-2 uppercase tracking-widest"><span data-key="updateMonth"></span>現在 (<span data-key="currRate"></span>%)</p>
-                        <p class="text-3xl md:text-5xl font-black text-white highlight-number">月々 約<span data-key="currMonthly"></span><span class="text-xl ml-1">万円</span></p>
-                    </div>
-                </div>
-
-                <div class="mt-12 pt-8 border-t border-slate-800 text-center">
-                    <p class="text-sm md:text-base text-slate-400 font-medium">
-                        4,000万円借入（35年返済）の場合、月々の負担額は<span class="text-white font-black mx-1">約<span data-key="monthlyDiff"></span>円</span>の変化があります。<br class="hidden md:block">
-                        「完走型」か「早期返済型」か。ライフプランに最適なシミュレーションを個別に作成いたします。
-                    </p>
-                </div>
-            </section>
-        </div>
-
-        <footer class="bg-slate-50 p-10 md:p-16 border-t border-slate-200">
-            <div class="max-w-md mx-auto text-center space-y-6">
-                <div>
-                    <p class="text-[10px] text-slate-400 font-black tracking-[0.3em] uppercase mb-4" data-key="companyName"></p>
-                    <div class="inline-flex items-center justify-center bg-white border border-slate-200 rounded-full px-8 py-4 shadow-sm group hover:border-blue-400 transition-colors">
-                        <span class="text-slate-400 mr-3">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-                        </span>
-                        <span class="text-xl md:text-2xl font-black text-slate-800 tracking-tight" data-key="phoneNumber"></span>
-                    </div>
-                </div>
-                
-                <p class="text-[9px] text-slate-400 leading-relaxed font-medium">
+            </div>
+            
+            <div class="max-w-2xl mx-auto px-4">
+                <p class="text-[8px] md:text-[9px] text-slate-500 leading-relaxed font-medium tracking-wider">
                     ※本資料は<span data-key="updateMonth"></span>時点の情報です。適用金利は審査結果、団信加入状況、融資率等により異なります。付帯ローンは各金融機関所定の審査があり、金利は変動します。実際の契約にあたっては各金融機関の重要事項説明を必ずご確認ください。
                 </p>
+            </div>
+            
+            <div class="no-print pt-4">
+                <button onclick="window.print()" class="text-gold-muted/40 hover:text-gold-muted text-[9px] font-bold tracking-[0.2em] transition-colors">
+                    PDFとして保存 / 印刷
+                </button>
             </div>
         </footer>
     </div>
 </body>
-
 </html>
-
